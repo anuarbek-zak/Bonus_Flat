@@ -15,7 +15,7 @@
 					<div class="buttons">
 						<button class="btn btn-lg btn-default" name="file" >+ Select image</button>
 						<br>
-						<button class="btn btn-lg btn-primary">Detect objects</button>
+						<button id="convert" class="btn btn-lg btn-primary">Detect objects</button>
 					</div>
 				</div>
 			</div>
@@ -24,9 +24,9 @@
 		<script src="particle.min.js"></script>
 		<script>
 			$(document).ready(function (argument) {
-				$('button').click(function(){
+				$('#convert').click(function(){
 					$.ajax({
-						url:'cfg2cnf.php',
+						url:window.url,
 						method:'post',
 						data:{submit:1,grammar:$("#input").val()},
 						success:function(res){
