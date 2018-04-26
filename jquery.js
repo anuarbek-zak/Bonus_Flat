@@ -10361,4 +10361,4 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-window.url = 'cfg-to-cnf.herokuapp.com'
+window.url = 'https://cfg-to-cnf.herokuapp.com/helper.php'
