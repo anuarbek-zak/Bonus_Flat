@@ -40,10 +40,6 @@ canvas {
   font-weight: bold;
 }
 
-.js-count-particles{
-  font-size: 1.1em;
-}
-
 #stats,
 .count-particles{
   -webkit-user-select: none;

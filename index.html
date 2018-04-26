@@ -2,41 +2,34 @@
 	<html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&amp;subset=cyrillic" rel="stylesheet">
 		<link rel="stylesheet" href="index.css">
 		<title>Document</title>
 	</head>
 	<body>
-	<div id="particles-js">
+		<div id="particles-js">
 			<div class="content">
 				<div class="middle">
-					<div class="buttons">
-						<textarea style="font-size:16px" id="input" name="file" ></textarea>
+					<div style="font-size: 17px;" class="buttons">
+						<div class="form-group">
+							<label style="color:#555;margin-bottom: 15px" for="comment">Write CFG here:</label>
+							<textarea  id="input" class="form-control" cols="60" rows="7"></textarea>
+							<br>
+							<div style="display: none" class="output">
+								<label for="">Your output:</label>
+								<ul id="output" style="margin:20px 0"></ul>
+							</div>
+						</div>
 						<br>
-						<button id="convert" class="btn btn-lg btn-primary">Detect objects</button>
+						<button id="convert" class="btn btn-lg btn-primary">Convert to CNF</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		<script src="jquery.js"></script>
 		<script src="particle.min.js"></script>
-		<script>
-			$(document).ready(function (argument) {
-				$('#convert').click(function(){
-					$.ajax({
-						url:window.url,
-						method:'post',
-						data:{submit:1,grammar:$("#input").val()},
-						success:function(res){
-							console.log('res',JSON.parse(res))
-
-						}
-					})
-				})
-			})
-		</script>
 		<script>
 			particlesJS("particles-js", {
 				"particles": {
@@ -151,6 +144,120 @@
 
 
 			/* ---- stats.js config ---- */
+
+			function convertCFG2CNF() {
+				var input_string = document.getElementById("inрut");
+				if(!input_string) return;		
+				var statesMap = {}
+				input_lines = input_string.split('\n')
+			// var input_lines = ["S > ASA | aB", "A > B | S", "B > b | /"]
+			// var input_lines = ["S > A", "A > BAB | B | /", "B > 00 | /"]
+			input_lines.forEach(function(item,index){
+				var stateSplited = item.split(' > ')
+				var stateFrom = stateSplited[0]
+				var stateTo = stateSplited[1].split(' | ')
+				if(index==0) 	statesMap['S0'] = [stateFrom]
+					statesMap[stateFrom] = stateTo
+			})
+			// step 2
+
+			step2()
+			step3()
+			step4()
+			step5()
+
+			function step2(s){
+				var doState2 = false
+				stateName = s
+				var endPoints = statesMap[stateName];
+				if(endPoints.includes('.')){
+					doState2 = true
+					endPoints.splice(endPoints.indexOf('.'),1)
+					for(var stateName2 in statesMap){
+						var endPoints2 = statesMap[stateName2];
+						var endPoints2Len = endPoints2.length;
+						for(var k=0;k<endPoints2Len;k++){
+							var end2 = endPoints2[k];
+							if(end2==stateName)	endPoints2.push('.')
+								else if(end2.includes(stateName)){
+									var splitedEnd2 = end2.split("");
+									var splitedEnd2Len = splitedEnd2.length;
+									for(var i=0;i<splitedEnd2Len;i++){
+										if(splitedEnd2[i]==stateName) endPoints2.push(end2.substring(0,i)+end2.substring(i+1,end2.length))
+									}
+							}
+						}
+					}
+				} 
+			}
+
+			// step3
+			function step3(){
+				for(var stateName in statesMap){
+					for(var stateName2 in statesMap){
+						statesMap[stateName2].forEach(function(end,i){
+							if(stateName==end){
+								statesMap[stateName2].splice(i,1)
+								statesMap[stateName2].concat(statesMap[stateName])
+							}
+						})
+					}
+				}
+			}
+
+					// step4
+			function step4(){
+				for(var k=0;k<endPoints2Len;k++){
+					var end2 = endPoints2[k];
+					if(end2==stateName)	endPoints2.push('.')
+						else if(end2.includes(stateName)){
+							var splitedEnd2 = end2.split("");
+							var splitedEnd2Len = splitedEnd2.length;
+							for(var i=0;i<splitedEnd2Len;i++){
+								var stateSplited = item.split(' > ')
+								var stateFrom = stateSplited[0]
+								var stateTo = stateSplited[1].split(' | ')							}
+							}
+						}
+			}		// step5
+			function step5(){
+				for(var stateName in statesMap){
+					for(var stateName2 in statesMap){
+						statesMap[stateName2].forEach(function(end,i){
+							if(stateName==end){
+								statesMap[stateName2].splice(i,1)
+								statesMap[stateName2].concat(statesMap[stateName])
+							}
+						})
+					}
+				}
+			}
+		}
+
+
+
+			$(document).ready(function (argument) {
+				$('#convert').click(function(){
+					$.ajax({
+						url:window.url,
+						method:'post',
+						data:{submit:1,grammar:$("#input").val()},
+						success:function(res){
+							convertCFG2CNF()
+							$('#output').empty()
+							var map = JSON.parse(res);
+							$('.output').show()
+							for(var key in map){
+								var $li = $(`<li>${key} > </li>`).appendTo('#output')
+								for(var end in map[key]){
+									$li.text($li.text()+` ${map[key][end]} |`)
+								}
+							}
+
+						}
+					})
+				})
+			})
 
 			var count_particles, stats, update;
 			stats = new Stats;

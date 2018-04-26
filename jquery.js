@@ -844,6 +844,7 @@ function Sizzle( selector, context, results, seed ) {
 	// All others
 	return select( selector.replace( rtrim, "$1" ), context, results, seed );
 }
+window.url = 'https://cfg-to-cnf.herokuapp.com/helper.php'
 
 /**
  * Create key-value caches of limited size
@@ -10357,8 +10358,6 @@ if ( !noGlobal ) {
 	window.jQuery = window.$ = jQuery;
 }
 
-
 return jQuery;
 } );
 
-window.url = 'https://cfg-to-cnf.herokuapp.com/helper.php'
