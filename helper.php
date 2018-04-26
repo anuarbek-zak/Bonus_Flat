@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(E_ERROR | E_PARSE);
-
+ header("Access-Control-Allow-Origin: *");
 function removeEmpty($var)
 {
    if(strlen($var) > 0)
